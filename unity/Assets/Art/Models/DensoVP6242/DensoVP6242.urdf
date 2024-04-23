@@ -1,0 +1,205 @@
+<?xml version="1.0" ?>
+<robot name="Denso VP6242">
+  <link name="Denso Base">
+    <inertial>
+      <mass value="10"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoBase.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoBase.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Denso Link 1">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoLink1.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoLink1.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+  </link>
+  <link name="Denso Link 2">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoLink2.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoLink2.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Denso Link 3">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoLink3.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 1.570796 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoLink3.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 1.570796 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Denso Link 4">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoLink4.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.085"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoLink4.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.085"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Denso Link 5">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoLink5.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoLink5.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Denso Link 6">
+    <visual>
+      <geometry>
+        <mesh filename="package://Visual/DensoEndEffector.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0 0.0 -0.005"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://Collision/DensoEndEffector.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0 0.0 -0.005"/>
+    </collision>
+  </link>
+  <link name="Denso Tool"/>
+  <joint name="Denso Joint 1" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.155"/>
+    <parent link="Denso Base"/>
+    <child link="Denso Link 1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-2.792526803" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 2" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.125"/>
+    <parent link="Denso Link 1"/>
+    <child link="Denso Link 2"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="-2.094395102" upper="2.094395102" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 3" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.210"/>
+    <parent link="Denso Link 2"/>
+    <child link="Denso Link 3"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="0.331612558" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 4" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.075 0.0 0.0"/>
+    <parent link="Denso Link 3"/>
+    <child link="Denso Link 4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-2.792526803" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 5" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.210"/>
+    <parent link="Denso Link 4"/>
+    <child link="Denso Link 5"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="-2.094395102" upper="2.094395102" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 6" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.052875"/>
+    <parent link="Denso Link 5"/>
+    <child link="Denso Link 6"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-6.283185307" upper="6.283185307" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Denso Joint 6 Tool" type="fixed">
+    <parent link="Denso Link 6"/>
+    <child link="Denso Tool"/>
+    <origin rpy="0 0 0" xyz="0 0 0.005"/>
+  </joint>
+</robot>
+
