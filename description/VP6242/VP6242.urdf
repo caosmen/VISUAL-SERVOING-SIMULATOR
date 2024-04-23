@@ -1,0 +1,204 @@
+<?xml version="1.0" ?>
+<robot name="VP6242">
+  <link name="Base">
+    <inertial>
+      <mass value="10"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/base.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/base.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Link 1">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/link_1.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/link_1.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+  </link>
+  <link name="Link 2">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/link_2.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/link_2.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 3.141592 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Link 3">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/link_3.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 1.570796 0" xyz="0 0 0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/link_3.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="-1.570796 1.570796 0" xyz="0 0 0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Link 4">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/link_4.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.085"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/link_4.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.085"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Link 5">
+    <inertial>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/link_5.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.0"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/link_5.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 1.570796 1.570796" xyz="0 0 0.0"/>
+    </collision>
+    <inertial>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <mass value="1"/>
+      <inertia ixx="1.0" ixy="0.0" ixz="0.0" iyy="1.0" iyz="0.0" izz="1.0"/>
+    </inertial>
+  </link>
+  <link name="Link 6">
+    <visual>
+      <geometry>
+        <mesh filename="package://visual/end_effector.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0 0.0 -0.005"/>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="package://collision/end_effector.dae" scale="1.0 1.0 1.0"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0.0 0.0 -0.005"/>
+    </collision>
+  </link>
+  <link name="Tool"/>
+  <joint name="Joint 1" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.155"/>
+    <parent link="Base"/>
+    <child link="Link 1"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-2.792526803" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 2" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.125"/>
+    <parent link="Link 1"/>
+    <child link="Link 2"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="-2.094395102" upper="2.094395102" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 3" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.210"/>
+    <parent link="Link 2"/>
+    <child link="Link 3"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="0.331612558" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 4" type="revolute">
+    <origin rpy="0 0 0" xyz="-0.075 0.0 0.0"/>
+    <parent link="Link 3"/>
+    <child link="Link 4"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-2.792526803" upper="2.792526803" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 5" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.210"/>
+    <parent link="Link 4"/>
+    <child link="Link 5"/>
+    <axis xyz="0 1 0"/>
+    <limit effort="0" lower="-2.094395102" upper="2.094395102" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 6" type="revolute">
+    <origin rpy="0 0 0" xyz="0.0 0.0 0.052875"/>
+    <parent link="Link 5"/>
+    <child link="Link 6"/>
+    <axis xyz="0 0 1"/>
+    <limit effort="0" lower="-6.283185307" upper="6.283185307" velocity="1.0"/>
+    <dynamics damping="0.7"/>
+  </joint>
+  <joint name="Joint 6 Tool" type="fixed">
+    <parent link="Link 6"/>
+    <child link="Tool"/>
+    <origin rpy="0 0 0" xyz="0 0 0.005"/>
+  </joint>
+</robot>
