@@ -6,19 +6,10 @@ using RosMessageTypes.BuiltinInterfaces;
 
 public class VP6242Controller : MonoBehaviour
 {
-    public enum ArticulationControlType
-    {
-        Position = ArticulationDriveType.Target,
-        Velocity = ArticulationDriveType.Velocity
-    };
-
     private ArticulationBody[] articulationChain;
 
     private readonly int defaultDynamic = 10;
     private readonly int defaultForceLimit = 1000;
-
-    [Header("Control Settings")]
-    public ArticulationControlType controlType = ArticulationControlType.Position;
 
     [Header("Control Parameters")]
     public float speed = 5f;
@@ -38,7 +29,7 @@ public class VP6242Controller : MonoBehaviour
             ArticulationDrive currentDrive = joint.xDrive;
 
             currentDrive.forceLimit = defaultForceLimit;
-            currentDrive.driveType = (ArticulationDriveType) controlType;
+            currentDrive.driveType = ArticulationDriveType.Target;
 
             joint.xDrive = currentDrive;
         }
@@ -103,24 +94,29 @@ public class VP6242Controller : MonoBehaviour
 
             if (joint != null)
             {
-                switch (controlType)
+                if (i < jointStateMsg.position.Length)
                 {
-                    case ArticulationControlType.Position:
                         float targetPosition = (float) jointStateMsg.position[i];
                         float targetPositionDegrees = targetPosition * Mathf.Rad2Deg;
 
                         ArticulationDrive currentDrive = joint.xDrive;
+
+                        currentDrive.driveType = ArticulationDriveType.Target;
                         currentDrive.target = targetPositionDegrees;
+
                         joint.xDrive = currentDrive;
-                        break;
-                    case ArticulationControlType.Velocity:
+                }
+                else if (i < jointStateMsg.velocity.Length)
+                {
                         float targetVelocity = (float) jointStateMsg.velocity[i];
                         float targetVelocityDegrees = targetVelocity * Mathf.Rad2Deg;
 
                         ArticulationDrive currentVelocityDrive = joint.xDrive;
+
+                        currentVelocityDrive.driveType = ArticulationDriveType.Velocity;
                         currentVelocityDrive.targetVelocity = targetVelocityDegrees;
+
                         joint.xDrive = currentVelocityDrive;
-                        break;
                 }
             }
         }
