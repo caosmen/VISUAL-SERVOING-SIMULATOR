@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 2329.9517, g: 2460.4397, b: 3524.7, a: 1}
+  m_IndirectSpecularColor: {r: 262.28348, g: 324.9705, b: 430.11627, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2877,7 +2877,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1996795617}
   m_HandleRect: {fileID: 1996795616}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
@@ -8164,6 +8164,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1200505738368783635, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1200505738368783635, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
       propertyPath: m_ParentAnchorPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -8186,6 +8191,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ParentAnchorRotation.z
       value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1476421103913895948, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1476421103913895948, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
@@ -8222,10 +8232,40 @@ PrefabInstance:
       propertyPath: m_ParentAnchorRotation.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2512291681747773163, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: field of view
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 2512291681747773163, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_FocalLength
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 2512291681747773163, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_SensorSize.x
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2512291681747773163, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_SensorSize.y
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 2601670381967339018, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
       propertyPath: m_Name
       value: VP6242
+      objectReference: {fileID: 0}
+    - target: {fileID: 2898053816138870908, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2988422387913372322, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2988422387913372322, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
@@ -8251,6 +8291,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ParentAnchorRotation.z
       value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 3508567867113177535, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: field of view
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 3508567867113177535, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_FocalLength
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 3508567867113177535, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_SensorSize.x
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 3508567867113177535, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_TargetTexture
+      value: 
+      objectReference: {fileID: 8600000, guid: e5941fc9e366dc7499f8639b92aa835f, type: 2}
+    - target: {fileID: 3633115916114700972, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3721449779435693072, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
@@ -8304,6 +8369,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6767160857276175136, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6767160857276175136, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
       propertyPath: m_ParentAnchorPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -8321,6 +8391,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ParentAnchorRotation.w
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7346313399656873466, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7346313399656873466, guid: 1890827764fed5c44af1ba4172460be2,
         type: 3}
@@ -8346,6 +8421,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_ParentAnchorRotation.z
       value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7967056054979590708, guid: 1890827764fed5c44af1ba4172460be2,
+        type: 3}
+      propertyPath: m_UseGravity
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
