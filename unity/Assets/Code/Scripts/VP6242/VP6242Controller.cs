@@ -2,6 +2,7 @@ using UnityEngine;
 using RosMessageTypes.Std;
 using RosMessageTypes.Sensor;
 using RosMessageTypes.BuiltinInterfaces;
+using System.Linq;
 
 
 public class VP6242Controller : MonoBehaviour
@@ -18,7 +19,9 @@ public class VP6242Controller : MonoBehaviour
 
     void Start()
     {
-        articulationChain = this.GetComponentsInChildren<ArticulationBody>();
+        articulationChain = this.GetComponentsInChildren<ArticulationBody>().ToArray();
+        articulationChain = articulationChain.Where(joint => joint.immovable == false).ToArray();
+
         foreach (ArticulationBody joint in articulationChain)
         {
             joint.gameObject.AddComponent<VP6242JointControl>();
