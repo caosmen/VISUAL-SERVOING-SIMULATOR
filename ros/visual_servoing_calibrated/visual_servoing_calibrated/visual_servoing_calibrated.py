@@ -5,6 +5,8 @@ from time import sleep
 
 from .controller import Vp6242Controller
 
+np.set_printoptions(precision=3, suppress=True)
+
 
 def main(args=None):
     """

@@ -82,15 +82,16 @@ class JointController:
         blue_matrix = self.compute_jacobian_feature(blue_x, blue_y, blue_z)
 
         image_jacobian = np.vstack((red_matrix, green_matrix, blue_matrix))
+
         return image_jacobian
 
-    def compute_jacobian_feature(self, x, y, z):
+    def compute_jacobian_feature(self, u, v, z):
         """
         Compute the Jacobian matrix for a point.
 
         Args:
-            x (float): The x-coordinate.
-            y (float): The y-coordinate.
+            u (float): The x-coordinate.
+            v (float): The y-coordinate.
             z (float): The z-coordinate.
 
         Returns:
@@ -100,8 +101,8 @@ class JointController:
         focal_length_p = self.node.focal_length / self.node.sensor_pixel_size
 
         jacobian_matrix = np.array([
-            [-focal_length_p / z, 0, x / z, x * y / focal_length_p, -(focal_length_p + x**2 / focal_length_p), y],
-            [0, -focal_length_p / z, y / z, focal_length_p + y**2 / focal_length_p, -x * y / focal_length_p, -x]
+            [-focal_length_p / z, 0, u / z, u * v / focal_length_p, -(focal_length_p + u ** 2 / focal_length_p), v],
+            [0, -focal_length_p / z, v / z, focal_length_p + v ** 2 / focal_length_p, -u * v / focal_length_p, -u]
         ])
 
         return jacobian_matrix
@@ -115,7 +116,7 @@ class JointController:
 
         Returns:
             np.ndarray: The robot Jacobian.
-            np.ndarray: The end effector rotation.
+            np.ndarray: The end effector transformation matrix.
         """
 
         T = np.eye(4)
@@ -138,7 +139,6 @@ class JointController:
             transformations.append(T)
 
         T_end_effector = transformations[-1]
-        T_end_effector_rotation = T_end_effector[:3, :3]
 
         p_end_effector = T_end_effector[:3, 3]
 
@@ -159,7 +159,7 @@ class JointController:
             J[:3, i] = Jp
             J[3:, i] = Jo
 
-        return J, T_end_effector_rotation
+        return J, T_end_effector
 
     def create_joint_configuration(self, joint_velocities):
         """

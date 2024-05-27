@@ -40,9 +40,9 @@ class Vp6242Controller(Node):
 
         # IBVS gains
         # Gain for the image
-        self.lambda_i = 10 * (10 ** -2)
+        self.lambda_i = 5 * 10 * (10 ** -2)
         # Gain for the joints
-        self.lambda_j = 10 * (10 ** -2)
+        self.lambda_j = 5 * 10 * (10 ** -2)
 
         # Camera parameters
         # Focal length of the camera
@@ -56,7 +56,7 @@ class Vp6242Controller(Node):
 
         # Desired features in the image
         # self.desired_features = get_triangle_vertices(200, self.camera_resolution[0])
-        self.desired_features = np.array([255, 282, 238, 315, 271, 315])
+        self.desired_features = np.array([255, 234, 238, 268, 271, 268])
 
         # DH parameters of the robot arm
         # The DH parameters are in the format [offset, d, a, alpha]
@@ -66,7 +66,7 @@ class Vp6242Controller(Node):
             [np.pi / 2, 0, -0.075, np.pi / 2],
             [0, 0.210, 0, -np.pi / 2],
             [0, 0, 0, np.pi / 2],
-            [0, 0.070, 0, 0]
+            [-np.pi / 2, 0.070, 0, 0],
         ])
 
         # Initialize the camera objects
@@ -92,7 +92,7 @@ class Vp6242Controller(Node):
         self.init_subscribers_and_publishers()
 
         # Create a timer to control the robot arm
-        self.create_timer(0.5, self.timer_callback)
+        self.create_timer(0.1, self.timer_callback)
 
     def init_subscribers_and_publishers(self):
         """
@@ -125,7 +125,7 @@ class Vp6242Controller(Node):
         features, depth_features = self.camera_rgb.extract_features(self.camera_depth)
 
         # If the features are not available, return
-        if features is None or depth_features is None:
+        if features is None:
             return
 
         # Compute the error between the desired features and the current features
@@ -135,30 +135,25 @@ class Vp6242Controller(Node):
         image_jacobian = self.joint_controller.compute_image_jacobian(features, depth_features)
 
         # Compute the inverse of the image Jacobian
-        inverse_jacobian = image_jacobian.T @ np.linalg.inv(
-            image_jacobian @ image_jacobian.T + 0.01**2 * np.eye(6)
-        )
+        inverse_jacobian = np.linalg.pinv(image_jacobian)
 
         # Compute the camera velocities
         camera_velocities = self.lambda_i * np.dot(inverse_jacobian, error.reshape(-1, 1))
 
-        # Compute the robot Jacobian and camera rotation matrix
-        robot_jacobian, camera_rotation = self.joint_controller.compute_robot_jacobian(
-            self.joint_states.joint_states.position[1:7]
+        # Compute the robot Jacobian and the end-effector transformation
+        robot_jacobian, end_effector_transformation = self.joint_controller.compute_robot_jacobian(
+            self.joint_states.joint_states.position
         )
+        end_effector_rotation = end_effector_transformation[:3, :3]
 
         # Compute the inverse of the robot Jacobian
         inverse_robot_jacobian = robot_jacobian.T @ np.linalg.inv(
-            robot_jacobian @ robot_jacobian.T + 0.01**2 * np.eye(6)
+            robot_jacobian @ robot_jacobian.T + 10 ** -5 * np.eye(6)
         )
 
-        # Since the rotation matrix in orthogonal, the inverse is the transpose
-        inverse_camera_rotation = camera_rotation.T
-        # Apply the nkron operator to the inverse camera rotation matrix
-        inverse_camera_rotation_kron = np.kron(np.eye(2), inverse_camera_rotation)
-
-        # Compute the camera velocities vector in the base frame of the robot
-        camera_velocities_base = np.dot(inverse_camera_rotation_kron, camera_velocities)
+        # Align the camera velocities with the robot base frame
+        end_effector_rotation_kron = np.kron(np.eye(2), end_effector_rotation)
+        camera_velocities_base = np.dot(end_effector_rotation_kron, camera_velocities)
 
         # Compute the joint velocities
         joint_velocities = self.lambda_j * np.dot(inverse_robot_jacobian, camera_velocities_base)
