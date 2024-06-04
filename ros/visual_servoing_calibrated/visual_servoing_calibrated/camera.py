@@ -57,10 +57,13 @@ class CameraRGB(CameraBase):
         extract_features: Extract the features from the camera image.
     """
 
-    def __init__(self, node):
+    def __init__(self, node, target_area_threshold=50, camera_threshold=120):
         super().__init__(node)
 
         self.camera_rgb = None
+
+        self.target_area_threshold = target_area_threshold
+        self.camera_threshold = camera_threshold
 
     def callback(self, msg):
         """
@@ -72,34 +75,29 @@ class CameraRGB(CameraBase):
 
         self.camera_rgb = msg
 
-    def extract_features(self, camera_depth):
+    def extract_features(self):
         """
         Extract the features from the camera image.
 
-        Args:
-            camera_depth (CameraDepth): The depth camera object.
-
         Returns:
             Optional[np.ndarray]: The extracted features.
-            Optional[np.ndarray]: The extracted depth features.
         """
 
         features = np.zeros(6)
-        depth_features = np.zeros(3)
 
-        if self.camera_rgb is None or camera_depth.camera_depth is None:
-            return None, None
+        if self.camera_rgb is None:
+            return None
 
         try:
             rgb_image = self.bridge.imgmsg_to_cv2(self.camera_rgb, 'bgr8')
-            depth_image = self.bridge.imgmsg_to_cv2(camera_depth.camera_depth, 'mono8')
 
             gray_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2GRAY)
-            _, thresh = cv2.threshold(gray_image, 200, 255, cv2.THRESH_BINARY)
-            contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+            _, binary = cv2.threshold(gray_image, self.target_area_threshold, 255, cv2.THRESH_BINARY_INV)
+            contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
             if not contours:
-                return None, None
+                return None
 
             largest_contour = max(contours, key=cv2.contourArea)
 
@@ -108,8 +106,11 @@ class CameraRGB(CameraBase):
 
             gray_image_blurred = cv2.GaussianBlur(roi, (5, 5), 0)
 
-            _, binary = cv2.threshold(gray_image_blurred, 200, 255, cv2.THRESH_BINARY_INV)
-            contours, _ = cv2.findContours(binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            _, binary = cv2.threshold(gray_image_blurred, self.camera_threshold, 255, cv2.THRESH_BINARY_INV)
+            contours, _ = cv2.findContours(binary, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+
+            if not contours:
+                return None
 
             coordinates = [
                 (int(cv2.moments(contour)["m10"] / cv2.moments(contour)["m00"]),
@@ -118,12 +119,7 @@ class CameraRGB(CameraBase):
             ]
 
             if len(coordinates) < 3:
-                return None, None
-
-            if len(coordinates) > 3:
-                center = (w // 2, h // 2)
-                coordinates.sort(key=lambda coord: np.linalg.norm(np.array(coord) - np.array(center)))
-                coordinates = coordinates[:3]
+                return None
 
             coordinates = [(coord[0] + x, coord[1] + y) for coord in coordinates]
 
@@ -142,28 +138,22 @@ class CameraRGB(CameraBase):
                     blue_dot = coord
 
             if not (red_dot and green_dot and blue_dot):
-                return None, None
+                return None
 
             ordered_coordinates = [red_dot[:2], green_dot[:2], blue_dot[:2]]
             features = np.array(ordered_coordinates).flatten()
 
-            depth_features = np.array([
-                depth_image[red_dot[1], red_dot[0]] / 255.0 * 5.0,
-                depth_image[green_dot[1], green_dot[0]] / 255.0 * 5.0,
-                depth_image[blue_dot[1], blue_dot[0]] / 255.0 * 5.0
-            ])
-
         except cv2.error as e:
             self.node.get_logger().error(f'OpenCV error in extract_features: {e}')
 
-            return None, None
+            return None
 
         except Exception as e:
             self.node.get_logger().error(f'Error in extract_features: {e}')
 
-            return None, None
+            return None
 
-        return features, depth_features
+        return features
 
 
 class CameraDepth(CameraBase):
@@ -178,6 +168,7 @@ class CameraDepth(CameraBase):
 
     Methods:
         callback: The callback function for the camera subscriber.
+        extract_depth_features: Extract the depth features from the camera image.
     """
 
     def __init__(self, node):
@@ -194,3 +185,34 @@ class CameraDepth(CameraBase):
         """
 
         self.camera_depth = msg
+
+    def extract_depth_features(self, features):
+        """
+        Extract the depth features from the camera image.
+
+        Args:
+            features (np.ndarray): The RGB features.
+
+        Returns:
+            Optional[np.ndarray]: The extracted depth features.
+        """
+
+        if features is None:
+            return None
+
+        if self.camera_depth is None:
+            return None
+
+        red_dot = features[:2]
+        green_dot = features[2:4]
+        blue_dot = features[4:]
+
+        depth_image = self.bridge.imgmsg_to_cv2(self.camera_depth, 'mono8')
+
+        depth_features = np.array([
+            depth_image[red_dot[1], red_dot[0]] / 255.0 * 5.0,
+            depth_image[green_dot[1], green_dot[0]] / 255.0 * 5.0,
+            depth_image[blue_dot[1], blue_dot[0]] / 255.0 * 5.0
+        ])
+
+        return depth_features

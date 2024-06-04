@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from rclpy.node import Node
@@ -33,6 +34,7 @@ class Vp6242Controller(Node):
         init_subscribers_and_publishers: Initialize subscribers and publishers.
         timer_callback: Timer callback function.
         move_joint: Move the robot arm to a specific joint configuration.
+        debug_state: Print the current state for debugging purposes.
     """
 
     def __init__(self):
@@ -40,9 +42,9 @@ class Vp6242Controller(Node):
 
         # IBVS gains
         # Gain for the image
-        self.lambda_i = 5 * 10 * (10 ** -2)
+        self.lambda_i = 2.5 * 10 * (10 ** -2)
         # Gain for the joints
-        self.lambda_j = 5 * 10 * (10 ** -2)
+        self.lambda_j = 2.5 * 10 * (10 ** -2)
 
         # Camera parameters
         # Focal length of the camera
@@ -56,7 +58,7 @@ class Vp6242Controller(Node):
 
         # Desired features in the image
         # self.desired_features = get_triangle_vertices(200, self.camera_resolution[0])
-        self.desired_features = np.array([255, 234, 238, 268, 271, 268])
+        self.desired_features = np.array([255, 230, 229, 281, 280, 281])
 
         # DH parameters of the robot arm
         # The DH parameters are in the format [offset, d, a, alpha]
@@ -121,48 +123,41 @@ class Vp6242Controller(Node):
             None
         """
 
-        # Extract the features from the camera images
-        features, depth_features = self.camera_rgb.extract_features(self.camera_depth)
+        features = self.camera_rgb.extract_features()
+        depth_features = self.camera_depth.extract_depth_features(features)
 
-        # If the features are not available, return
-        if features is None:
-            return
+        joint_states = self.joint_states.joint_states.position
 
-        # Compute the error between the desired features and the current features
-        error = self.desired_features - features
+        if features is not None and depth_features is not None:
+            error = self.desired_features - features
 
-        # Compute the image Jacobian and its pseudo-inverse
-        image_jacobian = self.joint_controller.compute_image_jacobian(features, depth_features)
+            image_jacobian = self.joint_controller.compute_image_jacobian(features, depth_features)
 
-        # Compute the inverse of the image Jacobian
-        inverse_jacobian = np.linalg.pinv(image_jacobian)
+            inverse_jacobian = np.linalg.pinv(image_jacobian)
 
-        # Compute the camera velocities
-        camera_velocities = self.lambda_i * np.dot(inverse_jacobian, error.reshape(-1, 1))
+            camera_velocities = self.lambda_i * np.dot(inverse_jacobian, error.reshape(-1, 1))
 
-        # Compute the robot Jacobian and the end-effector transformation
-        robot_jacobian, end_effector_transformation = self.joint_controller.compute_robot_jacobian(
-            self.joint_states.joint_states.position
-        )
-        end_effector_rotation = end_effector_transformation[:3, :3]
+            robot_jacobian, end_effector_transformation = self.joint_controller.compute_robot_jacobian(
+                joint_states
+            )
+            end_effector_rotation = end_effector_transformation[:3, :3]
 
-        # Compute the inverse of the robot Jacobian
-        inverse_robot_jacobian = robot_jacobian.T @ np.linalg.inv(
-            robot_jacobian @ robot_jacobian.T + 10 ** -5 * np.eye(6)
-        )
+            inverse_robot_jacobian = robot_jacobian.T @ np.linalg.inv(
+                robot_jacobian @ robot_jacobian.T + 10 ** -5 * np.eye(6)
+            )
 
-        # Align the camera velocities with the robot base frame
-        end_effector_rotation_kron = np.kron(np.eye(2), end_effector_rotation)
-        camera_velocities_base = np.dot(end_effector_rotation_kron, camera_velocities)
+            end_effector_rotation_kron = np.kron(np.eye(2), end_effector_rotation)
 
-        # Compute the joint velocities
-        joint_velocities = self.lambda_j * np.dot(inverse_robot_jacobian, camera_velocities_base)
+            camera_velocities_base = np.dot(end_effector_rotation_kron, camera_velocities)
 
-        # Compute the joint configuration
-        configuration = self.joint_controller.create_joint_configuration(joint_velocities.flatten())
+            joint_velocities = (self.lambda_j * np.dot(inverse_robot_jacobian, camera_velocities_base)).flatten()
+        else:
+            joint_velocities = np.zeros(6)
 
-        # Move the robot arm to the new joint configuration
+        configuration = self.joint_controller.create_joint_configuration(joint_velocities)
+
         self.move_joint(configuration)
+        self.debug_state(features, depth_features, joint_velocities, joint_states)
 
     def move_joint(self, configuration):
         """
@@ -183,3 +178,29 @@ class Vp6242Controller(Node):
         joint_command.velocity = joint_velocities
 
         self.publisher.publish(joint_command)
+
+    def debug_state(self, features, depth_features, joint_velocities, joint_states):
+        """
+        Print the current state for debugging purposes and clear the console.
+
+        Args:
+            features (np.ndarray): Extracted image features.
+            depth_features (np.ndarray): Extracted depth features.
+            joint_velocities (np.ndarray): Joint velocities.
+            joint_states (np.ndarray): Joint states.
+        """
+
+        os.system('clear')
+
+        self.get_logger().info('Visual Servoing Calibrated')
+        self.get_logger().info('--------------------------')
+
+        if features is not None:
+            self.get_logger().info(f'Features (in pixels): {features}')
+            self.get_logger().info(f'Depth Features (in meters): {depth_features}')
+            self.get_logger().info(f'Joint Velocities (in rad/s): {list(map(lambda x: round(x, 2), joint_velocities))}')
+            self.get_logger().info(f'Joint States (in rad): {list(map(lambda x: round(x, 2), joint_states))}')
+        else:
+            self.get_logger().info('No features detected')
+
+        self.get_logger().info('--------------------------')
