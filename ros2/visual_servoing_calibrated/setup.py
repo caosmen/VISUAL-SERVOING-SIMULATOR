@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['cvbridge3', 'numpy', 'opencv-python', 'python-statemachine', 'setuptools'],
+    install_requires=['cv-bridge', 'numpy', 'opencv-python', 'python-statemachine', 'setuptools'],
     zip_safe=True,
     maintainer='caosmen',
     maintainer_email='bll@ic.ufal.br',
