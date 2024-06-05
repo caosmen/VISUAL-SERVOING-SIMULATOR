@@ -19,10 +19,10 @@ class VP6242Machine(StateMachine):
         - TRACK -> END: The robot has reached the target.
     """
 
-    idle = State('Idle', initial=True)
-    search = State('Search')
-    track = State('Track')
-    end = State('End', final=True)
+    idle = State('IDLE', initial=True)
+    search = State('SEARCH')
+    track = State('TRACK')
+    end = State('END', final=True)
 
     start_search = idle.to(search)
     start_track = idle.to(track)

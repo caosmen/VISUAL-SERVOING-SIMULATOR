@@ -1,10 +1,13 @@
 import os
 import numpy as np
 
+from time import sleep
+
 from rclpy.node import Node
 
 from sensor_msgs.msg import JointState
 
+from .state_machine import VP6242Machine
 from .camera import VP6242CameraRGB, VP6242CameraDepth
 from .joint import VP6242JointStates, VP6242JointController
 
@@ -38,7 +41,6 @@ class VP6242Controller(Node):
         main_loop: Timer callback function.
         move_joint: Move the robot arm to a specific joint configuration.
         generate_random_joint_values: Generate random joint values based on robot limits.
-        debug_state: Print the current state for debugging purposes.
     """
 
     def __init__(self):
@@ -90,6 +92,9 @@ class VP6242Controller(Node):
         self.camera_rgb = VP6242CameraRGB(self)
         self.camera_depth = VP6242CameraDepth(self)
 
+        # Initialize the state machine object
+        self.state_machine = VP6242Machine(self)
+
         # Initialize the joint states and joint controller objects
         self.joint_states = VP6242JointStates(self)
         self.joint_controller = VP6242JointController(self, self.dh_params)
@@ -138,41 +143,63 @@ class VP6242Controller(Node):
             None
         """
 
-        features = self.camera_rgb.extract_features()
-        depth_features = self.camera_depth.extract_depth_features(features)
+        current_state = self.state_machine.current_state
 
-        joint_states = self.joint_states.joint_states.position
+        if current_state == self.state_machine.idle:
+            features = self.camera_rgb.extract_features()
 
-        if features is not None and depth_features is not None:
-            error = self.desired_features - features
+            if features is not None:
+                self.state_machine.start_search()
+            else:
+                self.state_machine.start_track()
+        elif current_state == self.state_machine.search:
+            random_joint_values = self.generate_random_joint_values()
+            configuration = self.joint_controller.create_joint_configuration(random_joint_values, type='position')
 
-            image_jacobian = self.joint_controller.compute_image_jacobian(features, depth_features)
+            self.move_joint(configuration)
 
-            inverse_jacobian = np.linalg.pinv(image_jacobian)
+            sleep(2)
 
-            camera_velocities = self.lambda_i * np.dot(inverse_jacobian, error.reshape(-1, 1))
+            features = self.camera_rgb.extract_features()
 
-            robot_jacobian, end_effector_transformation = self.joint_controller.compute_robot_jacobian(
-                joint_states
-            )
-            end_effector_rotation = end_effector_transformation[:3, :3]
+            if features is not None:
+                self.state_machine.found_target()
 
-            inverse_robot_jacobian = robot_jacobian.T @ np.linalg.inv(
-                robot_jacobian @ robot_jacobian.T + 10 ** -5 * np.eye(6)
-            )
+        elif current_state == self.state_machine.track:
+            features = self.camera_rgb.extract_features()
 
-            end_effector_rotation_kron = np.kron(np.eye(2), end_effector_rotation)
+            if features is not None:
+                depth_features = self.camera_depth.extract_depth_features(features)
 
-            camera_velocities_base = np.dot(end_effector_rotation_kron, camera_velocities)
+                error = self.desired_features - features
 
-            joint_velocities = (self.lambda_j * np.dot(inverse_robot_jacobian, camera_velocities_base)).flatten()
-        else:
-            joint_velocities = np.zeros(6)
+                image_jacobian = self.joint_controller.compute_image_jacobian(features, depth_features)
 
-        configuration = self.joint_controller.create_joint_configuration(joint_velocities, type='velocity')
+                inverse_jacobian = np.linalg.pinv(image_jacobian)
 
-        self.move_joint(configuration)
-        self.debug_state(features, depth_features, joint_velocities, joint_states)
+                camera_velocities = self.lambda_i * np.dot(inverse_jacobian, error.reshape(-1, 1))
+
+                robot_jacobian, end_effector_transformation = self.joint_controller.compute_robot_jacobian(
+                    self.joint_states.joint_states.position
+                )
+                end_effector_rotation = end_effector_transformation[:3, :3]
+
+                inverse_robot_jacobian = robot_jacobian.T @ np.linalg.inv(
+                    robot_jacobian @ robot_jacobian.T + 10 ** -5 * np.eye(6)
+                )
+
+                end_effector_rotation_kron = np.kron(np.eye(2), end_effector_rotation)
+
+                camera_velocities_base = np.dot(end_effector_rotation_kron, camera_velocities)
+
+                joint_velocities = (self.lambda_j * np.dot(inverse_robot_jacobian, camera_velocities_base)).flatten()
+                configuration = self.joint_controller.create_joint_configuration(joint_velocities, type='velocity')
+
+                self.move_joint(configuration)
+            else:
+                self.state_machine.lost_target()
+        elif current_state == self.state_machine.end:
+            pass
 
     def move_joint(self, configuration):
         """
@@ -206,29 +233,3 @@ class VP6242Controller(Node):
         random_values_radians = np.deg2rad(random_values_degrees)
 
         return random_values_radians
-
-    def debug_state(self, features, depth_features, joint_velocities, joint_states):
-        """
-        Print the current state for debugging purposes and clear the console.
-
-        Args:
-            features (np.ndarray): Extracted image features.
-            depth_features (np.ndarray): Extracted depth features.
-            joint_velocities (np.ndarray): Joint velocities.
-            joint_states (np.ndarray): Joint states.
-        """
-
-        os.system('clear')
-
-        self.get_logger().info('Visual Servoing Calibrated')
-        self.get_logger().info('--------------------------')
-
-        if features is not None:
-            self.get_logger().info(f'Features (in pixels): {features}')
-            self.get_logger().info(f'Depth Features (in meters): {depth_features}')
-            self.get_logger().info(f'Joint Velocities (in rad/s): {list(map(lambda x: round(x, 2), joint_velocities))}')
-            self.get_logger().info(f'Joint States (in rad): {list(map(lambda x: round(x, 2), joint_states))}')
-        else:
-            self.get_logger().info('No features detected')
-
-        self.get_logger().info('--------------------------')
