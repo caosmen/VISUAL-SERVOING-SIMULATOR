@@ -1,0 +1,5 @@
+cvbridge3==1.1
+numpy==1.26.4
+opencv-python==4.9.0.80
+python-statemachine==2.2.0
+setuptools==68.2.2

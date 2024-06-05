@@ -5,13 +5,13 @@ from rclpy.node import Node
 
 from sensor_msgs.msg import JointState
 
-from .camera import CameraRGB, CameraDepth
-from .joint import JointStates, JointController
+from .camera import VP6242CameraRGB, VP6242CameraDepth
+from .joint import VP6242JointStates, VP6242JointController
 
 from .utils import get_triangle_vertices
 
 
-class Vp6242Controller(Node):
+class VP6242Controller(Node):
     """
     Controller class for the VP6242 robot arm.
 
@@ -22,18 +22,22 @@ class Vp6242Controller(Node):
         lambda_i (float): IBVS gain for the image.
         lambda_j (float): IBVS gain for the joints.
         focal_length (float): Focal length of the camera.
+        sensor_size (tuple): Sensor size and resolution.
+        camera_resolution (tuple): Camera resolution.
+        sensor_pixel_size (float): Sensor pixel size.
         desired_features (np.ndarray): Desired features in the image.
         dh_params (np.ndarray): DH parameters of the robot arm.
-        camera_rgb (CameraRGB): RGB camera object.
-        camera_depth (CameraDepth): Depth camera object.
-        joint_states (JointStates): Joint states object.
-        joint_controller (JointController): Joint controller object.
-        publisher (rclpy.publisher.Publisher): Publisher for the joint commands.
+        joint_limits (np.ndarray): Joints physical limits of the robot arm.
+        camera_rgb (VP6242CameraRGB): VP6242CameraRGB object.
+        camera_depth (VP6242CameraDepth): VP6242CameraDepth object.
+        joint_states (VP6242JointStates): VP6242JointStates object.
+        joint_controller (VP6242JointController): VP6242JointController object.
 
     Methods:
         init_subscribers_and_publishers: Initialize subscribers and publishers.
-        timer_callback: Timer callback function.
+        main_loop: Timer callback function.
         move_joint: Move the robot arm to a specific joint configuration.
+        generate_random_joint_values: Generate random joint values based on robot limits.
         debug_state: Print the current state for debugging purposes.
     """
 
@@ -71,13 +75,24 @@ class Vp6242Controller(Node):
             [-np.pi / 2, 0.070, 0, 0],
         ])
 
+        # Joints physical limits of the robot arm
+        # The joint limits are in the format [(low, high)] in degrees
+        self.joint_limits = np.array([
+            (-160, 160),
+            (-120, 120),
+            (19, 160),
+            (-160, 160),
+            (-120, 120),
+            (-360, 360)
+        ])
+
         # Initialize the camera objects
-        self.camera_rgb = CameraRGB(self)
-        self.camera_depth = CameraDepth(self)
+        self.camera_rgb = VP6242CameraRGB(self)
+        self.camera_depth = VP6242CameraDepth(self)
 
         # Initialize the joint states and joint controller objects
-        self.joint_states = JointStates(self)
-        self.joint_controller = JointController(self, self.dh_params)
+        self.joint_states = VP6242JointStates(self)
+        self.joint_controller = VP6242JointController(self, self.dh_params)
 
         # Declare the parameters for the node
         self.declare_parameters(
@@ -94,7 +109,7 @@ class Vp6242Controller(Node):
         self.init_subscribers_and_publishers()
 
         # Create a timer to control the robot arm
-        self.create_timer(0.1, self.timer_callback)
+        self.create_timer(0.1, self.main_loop)
 
     def init_subscribers_and_publishers(self):
         """
@@ -115,7 +130,7 @@ class Vp6242Controller(Node):
 
         self.publisher = self.create_publisher(JointState, joint_command_topic, 10)
 
-    def timer_callback(self):
+    def main_loop(self):
         """
         Timer callback function to control the robot arm.
 
@@ -154,7 +169,7 @@ class Vp6242Controller(Node):
         else:
             joint_velocities = np.zeros(6)
 
-        configuration = self.joint_controller.create_joint_configuration(joint_velocities)
+        configuration = self.joint_controller.create_joint_configuration(joint_velocities, type='velocity')
 
         self.move_joint(configuration)
         self.debug_state(features, depth_features, joint_velocities, joint_states)
@@ -178,6 +193,19 @@ class Vp6242Controller(Node):
         joint_command.velocity = joint_velocities
 
         self.publisher.publish(joint_command)
+
+    def generate_random_joint_values(self):
+        """
+        Generate random joint values based on robot limits.
+
+        Args:
+            None
+        """
+
+        random_values_degrees = np.array([np.random.uniform(low, high) for (low, high) in self.joint_limits])
+        random_values_radians = np.deg2rad(random_values_degrees)
+
+        return random_values_radians
 
     def debug_state(self, features, depth_features, joint_velocities, joint_states):
         """

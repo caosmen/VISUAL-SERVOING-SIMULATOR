@@ -12,6 +12,10 @@ class CameraBase:
     Args:
         node (rclpy.node.Node): The ROS node.
 
+    Attributes:
+        node (rclpy.node.Node): The ROS node.
+        bridge (cv_bridge.CvBridge): The OpenCV bridge.
+
     Methods:
         init_subscriber: Initialize the subscriber for the camera topic.
         callback: The callback function for the camera subscriber.
@@ -42,15 +46,19 @@ class CameraBase:
         raise NotImplementedError("This method should be implemented by subclasses")
 
 
-class CameraRGB(CameraBase):
+class VP6242CameraRGB(CameraBase):
     """
-    Class for the RGB camera.
+    Class for the VP6242 RGB camera.
 
     Args:
         node (rclpy.node.Node): The ROS node.
+        target_area_threshold (int): The target area threshold.
+        camera_threshold (int): The camera threshold.
 
     Attributes:
         camera_rgb (sensor_msgs.msg.Image): The RGB camera image.
+        target_area_threshold (int): The target area threshold.
+        camera_threshold (int): The camera threshold.
 
     Methods:
         callback: The callback function for the camera subscriber.
@@ -156,9 +164,9 @@ class CameraRGB(CameraBase):
         return features
 
 
-class CameraDepth(CameraBase):
+class VP6242CameraDepth(CameraBase):
     """
-    Class for the depth camera.
+    Class for the VP6242 depth camera.
 
     Args:
         node (rclpy.node.Node): The ROS node.

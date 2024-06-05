@@ -3,14 +3,15 @@ import numpy as np
 from sensor_msgs.msg import JointState
 
 
-class JointStates:
+class VP6242JointStates:
     """
-    Class to handle the joint states of the robot arm.
+    Class for the VP6242 joint states.
 
     Args:
         node (rclpy.node.Node): The ROS node.
 
     Attributes:
+        node (rclpy.node.Node): The ROS node.
         joint_states (sensor_msgs.msg.JointState): The joint states of the robot arm.
 
     Methods:
@@ -43,11 +44,15 @@ class JointStates:
         self.joint_states = msg
 
 
-class JointController:
+class VP6242JointController:
     """
-    Class to control the joints of the robot arm.
+    Class for the VP6242 joint controller.
 
     Args:
+        node (rclpy.node.Node): The ROS node.
+        dh_params (np.ndarray): The DH parameters of the robot arm.
+
+    Attributes:
         node (rclpy.node.Node): The ROS node.
         dh_params (np.ndarray): The DH parameters of the robot arm.
 
@@ -161,24 +166,28 @@ class JointController:
 
         return J, T_end_effector
 
-    def create_joint_configuration(self, joint_velocities):
+    def create_joint_configuration(self, joint_values, type='position'):
         """
-        Create the joint configuration from the given velocities.
+        Create the joint configuration from the given joints values.
 
         Args:
-            joint_velocities (np.ndarray): The joint velocities.
+            joint_values (np.ndarray): The joint values.
+            type (string): The joint configuration type, either 'position' or 'velocity'.
 
         Returns:
             list[dict]: The joint configuration.
         """
 
+        if type not in ['position', 'velocity']:
+            raise ValueError('Invalid joint configuration type.')
+
         configuration = [
-            {'name': 'Link1', 'velocity': joint_velocities[0]},
-            {'name': 'Link2', 'velocity': joint_velocities[1]},
-            {'name': 'Link3', 'velocity': joint_velocities[2]},
-            {'name': 'Link4', 'velocity': joint_velocities[3]},
-            {'name': 'Link5', 'velocity': joint_velocities[4]},
-            {'name': 'EndEffector', 'velocity': joint_velocities[5]}
+            {'name': 'Link1', type: joint_values[0]},
+            {'name': 'Link2', type: joint_values[1]},
+            {'name': 'Link3', type: joint_values[2]},
+            {'name': 'Link4', type: joint_values[3]},
+            {'name': 'Link5', type: joint_values[4]},
+            {'name': 'EndEffector', type: joint_values[5]}
         ]
 
         return configuration

@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setuptools'],
+    install_requires=['cvbridge3', 'numpy', 'opencv-python', 'python-statemachine', 'setuptools'],
     zip_safe=True,
     maintainer='caosmen',
     maintainer_email='bll@ic.ufal.br',
@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'visual_servoing_calibrated = visual_servoing_calibrated.visual_servoing_calibrated:main',
+            'simple_tracking = visual_servoing_calibrated.simple_tracking:main',
+            'random_start_tracking = visual_servoing_calibrated.random_start_tracking:main',
         ],
     },
 )
